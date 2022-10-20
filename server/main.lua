@@ -39,7 +39,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 				if Config.WipeInventoryOnRespawn then
 					Player.Functions.ClearInventory()
 					MySQL.Async.execute('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
-					TriggerClientEvent('QBCore:Notify', src, Lang:t('error.possessions_taken'), 'error')
+					TriggerClientEvent('SS-Notify:Alert', source, "Pinehill", "Alla sängar är upptagna", 5000, 'error')
 				end
 				Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
 					exports['qb-management']:AddMoney("ambulance", Config.BillCost)
@@ -53,7 +53,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 		if Config.WipeInventoryOnRespawn then
 			Player.Functions.ClearInventory()
 			MySQL.Async.execute('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
-			TriggerClientEvent('QBCore:Notify', src, Lang:t('error.possessions_taken'), 'error')
+			TriggerClientEvent('SS-Notify:Alert', source, "Pinehill", "Alla sängar är upptagna", 5000, 'error')
 		end
 		Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
 			exports['qb-management']:AddMoney("ambulance", Config.BillCost)
@@ -66,7 +66,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 				if Config.WipeInventoryOnRespawn then
 					Player.Functions.ClearInventory()
 					MySQL.update('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
-					TriggerClientEvent('QBCore:Notify', src, Lang:t('error.possessions_taken'), 'error')
+					TriggerClientEvent('SS-Notify:Alert', source, "Pinehill", "Alla sängar är upptagna", 5000, 'error')
 				end
 				Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
 					exports['qb-management']:AddMoney("ambulance", Config.BillCost)
@@ -81,7 +81,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 		if Config.WipeInventoryOnRespawn then
 			Player.Functions.ClearInventory()
 			MySQL.update('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
-			TriggerClientEvent('QBCore:Notify', src, Lang:t('error.possessions_taken'), 'error')
+			TriggerClientEvent('SS-Notify:Alert', source, "Pinehill", "Alla sängar är upptagna", 5000, 'error')
 		end
 		Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
 			exports['qb-management']:AddMoney("ambulance", Config.BillCost)
@@ -200,7 +200,7 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
 				TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['firstaid'], "remove")
 				TriggerClientEvent('hospital:client:Revive', Patient.PlayerData.source)
 			else
-				TriggerClientEvent('QBCore:Notify', src, Lang:t('error.not_enough_money'), "error")
+				TriggerClientEvent('SS-Notify:Alert', source, "Pinehill", "Du har inte tillräkligt med pengar på dig", 5000, 'error')
 			end
 		else
 			Player.Functions.RemoveItem('firstaid', 1)
@@ -217,14 +217,14 @@ RegisterNetEvent('hospital:server:SendDoctorAlert', function()
         local players = QBCore.Functions.GetQBPlayers()
         for _, v in pairs(players) do
             if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
-                TriggerClientEvent('QBCore:Notify', v.PlayerData.source, Lang:t('info.dr_needed'), 'ambulance')
+                TriggerClientEvent('SS-Notify:Alert', source, "Pinehill", "En sjukvårdare behövs på Sjukhuset", 5000, 'info')
             end
         end
         SetTimeout(Config.DocCooldown * 60000, function()
             doctorCalled = false
         end)
     else
-        TriggerClientEvent('QBCore:Notify', src, 'Doctor has already been notified', 'error')
+        TriggerClientEvent('SS-Notify:Alert', source, "Pinehill", "Sjukvårdare har redan blivit kallade", 5000, 'info')
     end
 end)
 
@@ -241,7 +241,7 @@ RegisterNetEvent('hospital:server:CanHelp', function(helperId, canHelp)
 	if canHelp then
 		TriggerClientEvent('hospital:client:HelpPerson', helperId, src)
 	else
-		TriggerClientEvent('QBCore:Notify', helperId, Lang:t('error.cant_help'), "error")
+		TriggerClientEvent('SS-Notify:Alert', source, "Pinehill", "Du kan inte hjälpa denna person", 5000, 'error')
 	end
 end)
 
@@ -348,7 +348,7 @@ QBCore.Commands.Add("status", Lang:t('info.check_health'), {}, false, function(s
 	if Player.PlayerData.job.name == "ambulance" then
 		TriggerClientEvent("hospital:client:CheckStatus", src)
 	else
-		TriggerClientEvent('QBCore:Notify', src, Lang:t('error.not_ems'), "error")
+		TriggerClientEvent('SS-Notify:Alert', source, "Pinehill", "Du måste vara sjukvårdare", 5000, 'error')
 	end
 end)
 
@@ -358,7 +358,7 @@ QBCore.Commands.Add("heal", Lang:t('info.heal_player'), {}, false, function(sour
 	if Player.PlayerData.job.name == "ambulance" then
 		TriggerClientEvent("hospital:client:TreatWounds", src)
 	else
-		TriggerClientEvent('QBCore:Notify', src, Lang:t('error.not_ems'), "error")
+		TriggerClientEvent('SS-Notify:Alert', source, "Pinehill", "Du måste vara sjukvårdare", 5000, 'error')
 	end
 end)
 
@@ -368,7 +368,7 @@ QBCore.Commands.Add("revivep", Lang:t('info.revive_player'), {}, false, function
 	if Player.PlayerData.job.name == "ambulance" then
 		TriggerClientEvent("hospital:client:RevivePlayer", src)
 	else
-		TriggerClientEvent('QBCore:Notify', src, Lang:t('error.not_ems'), "error")
+		TriggerClientEvent('SS-Notify:Alert', source, "Pinehill", "Du måste vara sjukvårdare", 5000, 'error')
 	end
 end)
 
@@ -379,7 +379,7 @@ QBCore.Commands.Add("revive", Lang:t('info.revive_player_a'), {{name = "id", hel
 		if Player then
 			TriggerClientEvent('hospital:client:Revive', Player.PlayerData.source)
 		else
-			TriggerClientEvent('QBCore:Notify', src, Lang:t('error.not_online'), "error")
+			TriggerClientEvent('SS-Notify:Alert', source, "Pinehill", "Spelaren är inte online", 5000, 'error')
 		end
 	else
 		TriggerClientEvent('hospital:client:Revive', src)
@@ -393,7 +393,7 @@ QBCore.Commands.Add("setpain", Lang:t('info.pain_level'), {{name = "id", help = 
 		if Player then
 			TriggerClientEvent('hospital:client:SetPain', Player.PlayerData.source)
 		else
-			TriggerClientEvent('QBCore:Notify', src, Lang:t('error.not_online'), "error")
+			TriggerClientEvent('SS-Notify:Alert', source, "Pinehill", "Spelaren är inte online", 5000, 'error')
 		end
 	else
 		TriggerClientEvent('hospital:client:SetPain', src)
@@ -407,7 +407,7 @@ QBCore.Commands.Add("kill", Lang:t('info.kill'), {{name = "id", help = Lang:t('i
 		if Player then
 			TriggerClientEvent('hospital:client:KillPlayer', Player.PlayerData.source)
 		else
-			TriggerClientEvent('QBCore:Notify', src, Lang:t('error.not_online'), "error")
+			TriggerClientEvent('SS-Notify:Alert', source, "Pinehill", "Spelaren är inte online", 5000, 'error')ggerClientEvent('QBCore:Notify', src, Lang:t('error.not_online'), "error")
 		end
 	else
 		TriggerClientEvent('hospital:client:KillPlayer', src)
@@ -421,7 +421,7 @@ QBCore.Commands.Add('aheal', Lang:t('info.heal_player_a'), {{name = 'id', help =
 		if Player then
 			TriggerClientEvent('hospital:client:adminHeal', Player.PlayerData.source)
 		else
-			TriggerClientEvent('QBCore:Notify', src, Lang:t('error.not_online'), "error")
+			TriggerClientEvent('SS-Notify:Alert', source, "Pinehill", "Spelaren är inte online", 5000, 'error')
 		end
 	else
 		TriggerClientEvent('hospital:client:adminHeal', src)
